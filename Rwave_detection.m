@@ -1,11 +1,7 @@
-function [peak_ind,peak_ind_1,peak_ind_2,peak_ind_comb] = Rwave_detection(ECG_signal,figure_num)  % remove figure_num
+function [filtered_peaks] = Rwave_detection(ECG_signal)
 % This function receives a ECG signal, and returns a vector that contains the indexes in which the R waves appear in the ECG signal
 tic
-% Define time vector 
-fs = 1000; 
-T = 1/fs; 
-t = (0:length(ECG_signal)-1)*T;
-
+fs = 1000;
 
 first_deriv = zeros(1,length(ECG_signal));
 second_deriv = zeros(1,length(ECG_signal));
@@ -17,53 +13,43 @@ for n = 3: (length(ECG_signal)-2)
     
 end
 
-linear_combination = 1.3*first_deriv + 1.1*second_deriv;
-
-% Normalize deriv
+% Normalize
 min_val = min(first_deriv);
 max_val = max(first_deriv);
-
-norm_der1 = -1+(2*(first_deriv-min_val))/(max_val-min_val);
+norm_first_deriv = (first_deriv-min_val)/(max_val-min_val);
 
 min_val = min(second_deriv);
 max_val = max(second_deriv);
+norm_second_deriv = (second_deriv-min_val)/(max_val-min_val);
 
-norm_der2 = -1+(2*(second_deriv-min_val))/(max_val-min_val);
-
-min_val = min(linear_combination);
-max_val = max(linear_combination);
-
-norm_comb = (linear_combination-min_val)/(max_val-min_val);
+linear_combination = 3*norm_first_deriv + 1.1*norm_second_deriv;
 
 
-% Normalize ECG signal
-min_val = min(ECG_signal);
-max_val = max(ECG_signal);
-
-norm_ECG = -1+(2*(ECG_signal-min_val))/(max_val-min_val);
-
-
-% Finding the indexes of the R peaks, using a threshold of 0.4 mV.
-[~,peak_ind] = findpeaks(norm_ECG,'MinPeakProminence',0.6,'MinPeakDistance',fs*0.2);
-[~,peak_ind_1] = findpeaks(norm_der1,'MinPeakProminence',0.4,'MinPeakDistance',fs*0.2);
-[~,peak_ind_2] = findpeaks(norm_der2,'MinPeakProminence',0.4,'MinPeakDistance',fs*0.2);
-[~,peak_ind_comb] = findpeaks(norm_comb,'MinPeakProminence',0.25,'MinPeakDistance',fs*0.2);
+% Finding the indexes of the R peaks, using a threshold of 0.1.
+[~,peak_ind_comb] = findpeaks(linear_combination,'MinPeakProminence',0.5,'MinPeakDistance',fs*0.4);
 % Coverting indexes vector to time vector
 
+
+% Checking if 6 out of 8 of next samples reach threshold
+filtered_peaks = zeros(1,length(peak_ind_comb));
+k=0;
+for i = 1:length(peak_ind_comb)
+    
+    index = peak_ind_comb(i);
+    check_vec = linear_combination(index+1:index+8);
+    threshold = 0.2;
+    
+    if sum(check_vec>threshold) >= 6   
+        k = k+1;
+        filtered_peaks(k) = peak_ind_comb(i);      
+    end 
+end
+filtered_peaks = filtered_peaks(1:k);
 
 
 % to be removed!!!
 figure(1) 
-findpeaks(norm_ECG,'MinPeakProminence',0.6,'MinPeakDistance',fs*0.2);
-
-figure(2)
-findpeaks(norm_der1,'MinPeakProminence',0.4,'MinPeakDistance',fs*0.2);
-
-figure(3)
-findpeaks(norm_der2,'MinPeakProminence',0.4,'MinPeakDistance',fs*0.2);
-
-figure(4)
-findpeaks(norm_comb,'MinPeakProminence',0.25,'MinPeakDistance',fs*0.2);
+findpeaks(linear_combination,'MinPeakProminence',0.5,'MinPeakDistance',fs*0.4);
 % to be removed!!!
 toc
 end
