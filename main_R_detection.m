@@ -1,4 +1,4 @@
-
+clc; close all; clear;
 tic
 %import all ecg signals
 sig1=load('ECG_308317361_01.mat');
@@ -17,16 +17,23 @@ clear sig1 sig2 sig3 sig4
 
 %% R-wave detection 
 %call function to detect R-waves 
-[R011,der1,der2,comb] = Rwave_detection(ECG_305338691_01,1); %R011 = index of R waves in signal  % remove numbers and this note!!!
+[R011] = Rwave_detection(ECG_305338691_01); %R011 = index of R waves in signal  % remove numbers and this note!!!
 %R012 = Rwave_detection(ECG_305338691_02,2); %R012 = index of R waves in signal
 %R021 = Rwave_detection(ECG_308317361_01,3); %R021 = index of R waves in signal
 %R022 = Rwave_detection(ECG_308317361_02,4); %R022 = index of R waves in signal
 
 %% Plots
 %Add required plots
+% Define time vector 
+fs = 1000; 
+T = 1/fs; 
+%t = (0:length(ECG_signal)-1)*T;
+
+
+figure(2)
 plot(ECG_308317361_01)
 hold on
-plot(comb,ECG_308317361_01(comb),'o')
+plot(R011,ECG_308317361_01(R011),'o')
 
 
 %% Save R-wave detections for all signals
