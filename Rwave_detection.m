@@ -29,7 +29,7 @@ norm_second_deriv = (second_deriv-min_val)/(max_val-min_val);
 linear_combination = 3*norm_first_deriv + 1.1*norm_second_deriv;
 
 
-% Finding the indexes of the R peaks, using a minimum prominence 0f 0.6 and a minimum distance 0f 0.6 seconds
+% Finding the indexes of the R peaks, using a minimum prominence 0f 0.6 and a minimum distance 0f 0.4 seconds
 [~,peak_ind] = findpeaks(linear_combination,'MinPeakProminence',0.6,'MinPeakDistance',fs*0.4);
 
 % Checking if 6 out of 8 of surrounding samples reach threshold
@@ -53,12 +53,12 @@ filtered_peaks = filtered_peaks(1:k);
 
 % In order to adjust the indexes to the peak exactly, we change it to the index
 % of the maximum point in a window of 350 samples to each direction
+window = 350;
 for i = 1:length(filtered_peaks)
     
     index = filtered_peaks(i);
     
-    if (index>350) && (index<(length(ECG_signal)-350))
-        window = 350;
+    if (index>window) && (index<(length(ECG_signal)-window))
         check_vec = ECG_signal(index-window:index+window);
         [~,max_ind] = max(check_vec);
         ind_change = max_ind-(window+1);
