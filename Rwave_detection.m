@@ -67,6 +67,9 @@ for i = 1:length(filtered_peaks)
     end
 end
 
+% Delete replicated peaks if exsists
+filtered_peaks = unique(filtered_peaks);
+
 toc
 end
 
