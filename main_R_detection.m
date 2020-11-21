@@ -68,15 +68,32 @@ axis([20 25 min(ECG_305338691_02) max(ECG_305338691_02)])
 % Computing heart rate for R011 and R021
 % Calculating the Heart rate for each heartbeat, by subtracting the time between each consecutive R wave.
 HR1 = zeros(1,length(t_01));
-for i = 1:length(R011)-1 
-    diff = (R011(i+1)-R011(i))*T;
-    HR1(R011(i):R011(i+1)) = 1/diff;
+i = 1;
+time_window = 60;
+while i < length(HR1) 
+    if i<length(HR1)-time_window*fs
+        beats = sum((R011>(t_01(i)*fs))&(R011<(t_01(i+time_window*fs)*fs)));
+        HR1(i:i+fs*time_window) = beats/time_window;
+    else
+        beats = sum((R011>(t_01(i)*fs))&(R011<(t_01(end)*fs)));
+        HR1(i:end) = (beats*fs)/length(HR1(i:end));
+    end
+    i= i+fs*time_window;
 end
 
+
 HR2 = zeros(1,length(t_02));
-for i = 1:length(R021)-1 
-    diff = (R021(i+1)-R021(i))*T;
-    HR2(R021(i):R021(i+1)) = 60/diff;
+i = 1;
+time_window = 60;
+while i < length(HR2) 
+    if i<length(HR2)-time_window*fs
+        beats = sum((R011>(t_02(i)*fs))&(R011<(t_02(i+time_window*fs)*fs)));
+        HR2(i:i+fs*time_window) = beats/time_window;
+    else
+        beats = sum((R011>(t_02(i)*fs))&(R011<(t_02(end)*fs)));
+        HR2(i:end) = (beats*fs)/length(HR2(i:end));
+    end
+    i= i+fs*time_window;
 end
 
 figure(5)
