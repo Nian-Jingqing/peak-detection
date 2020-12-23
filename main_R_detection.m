@@ -1,26 +1,26 @@
 clc; clear; close all
 tic
 %import all ecg signals
-sig1=load('ECG_308317361_01.mat');
+sig1=load('ECG_308317361_N_01.mat');
 ECG_308317361_01 = sig1.sig;
 
-sig2=load('ECG_308317361_02.mat');
+sig2=load('ECG_308317361_N_02.mat');
 ECG_308317361_02 = sig2.sig;
 
-sig3=load('ECG_305338691_01.mat');
+sig3=load('ECG_305338691_N_01.mat');
 ECG_305338691_01 = sig3.sig;
 
-sig4=load('ECG_305338691_02.mat');
+sig4=load('ECG_305338691_N_02.mat');
 ECG_305338691_02 = sig4.sig;
 
 clear sig1 sig2 sig3 sig4 
 
 %% R-wave detection 
 %call function to detect R-waves 
-R011 = Rwave_detection(ECG_305338691_01); %R011 = index of R waves in signal
-R012 = Rwave_detection(ECG_308317361_01); %R012 = index of R waves in signal
-R021 = Rwave_detection(ECG_305338691_02); %R021 = index of R waves in signal
-R022 = Rwave_detection(ECG_308317361_02); %R022 = index of R waves in signal
+[R011,filtered_signal_11] = Rwave_detection(ECG_305338691_01,47); %R011 = index of R waves in signal
+[R012,filtered_signal_12] = Rwave_detection(ECG_308317361_01,59); %R012 = index of R waves in signal
+[R021,filtered_signal_21] = Rwave_detection(ECG_305338691_02,64); %R021 = index of R waves in signal
+[R022,filtered_signal_22] = Rwave_detection(ECG_308317361_02,50); %R022 = index of R waves in signal
 
 %% Plots
 % Add required plots
@@ -33,40 +33,40 @@ t_02 = (0:length(ECG_305338691_02)-1)*T;
 % First plot - the given ECG signals shown in seconds 12-17
 
 figure(1)
-plot(t_01(12*fs:17*fs),ECG_305338691_01(12*fs:17*fs))
+plot(t_01(12*fs:17*fs),filtered_signal_11(12*fs:17*fs))
 title('first ECG signal in seconds 12-17')
 xlabel('Time (sec)')
 ylabel('Voltage (micro-Volt)')
 axis tight
 
 figure(2)
-plot(t_02(12*fs:17*fs),ECG_305338691_02(12*fs:17*fs))
+plot(t_02(12*fs:17*fs),filtered_signal_21(12*fs:17*fs))
 title('second ECG signal in seconds 12-17')
 xlabel('Time (sec)')
 ylabel('Voltage (micro-Volt)')
-axis([12 17 min(ECG_305338691_02) max(ECG_305338691_02)])
+axis([12 17 min(filtered_signal_21) max(filtered_signal_21)])
 
 % Second plot - the given ECG signals, with markers on R waves, shown in seconds 20-25
 
 figure(3)
-plot(t_01,ECG_305338691_01)
+plot(t_01,filtered_signal_11)
 title('first ECG signal in seconds 20-25')
 xlabel('Time (sec)')
 ylabel('Voltage (micro-Volt)')
 hold on
-plot(T*R011,ECG_305338691_01(R011),'o')
+plot(T*R011,filtered_signal_11(R011),'o')
 hold off
-axis([20 25 min(ECG_305338691_01) max(ECG_305338691_01)])
+axis([20 25 min(filtered_signal_11) max(filtered_signal_11)])
 
 figure(4)
-plot(t_02,ECG_305338691_02)
+plot(t_02,filtered_signal_21)
 title('second ECG signal in seconds 20-25')
 xlabel('Time (sec)')
 ylabel('Voltage (micro-Volt)')
 hold on
-plot(T*R021,ECG_305338691_02(R021),'o')
+plot(T*R021,filtered_signal_21(R021),'o')
 hold off
-axis([20 25 min(ECG_305338691_02) max(ECG_305338691_02)])
+axis([20 25 min(filtered_signal_21) max(filtered_signal_21)])
 
 % Computing heart rate for R011 and R021
 % Calculating the Heart rate in BPS, by counting the number of
