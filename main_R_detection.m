@@ -27,8 +27,8 @@ clear sig1 sig2 sig3 sig4
 % Define time vector 
 fs = 1000; 
 T = 1/fs; 
-t_01 = (0:length(ECG_305338691_01)-1)*T;
-t_02 = (0:length(ECG_305338691_02)-1)*T;
+t_01 = (0:length(filtered_signal_11)-1)*T;
+t_02 = (0:length(filtered_signal_21)-1)*T;
 
 % First plot - the given ECG signals shown in seconds 12-17
 
@@ -80,7 +80,7 @@ HR1 = zeros(1,length(R011_times)-1);
 i = 1;
 while i < length(HR1) 
 
-    HR1(i) = R011_times(i+1) - R011_times(i);
+    HR1(i) = 1/(R011_times(i+1) - R011_times(i));
     i = i + 1;
     
 end
@@ -93,7 +93,7 @@ HR2 = zeros(1,length(R021_times)-1);
 i = 1;
 while i < length(HR2) 
 
-    HR2(i) = R021_times(i+1) - R021_times(i);
+    HR2(i) = 1/(R021_times(i+1) - R021_times(i));
     i = i + 1;
     
 end
@@ -116,4 +116,32 @@ ylabel('Heart Rate (beats per second)')
 %add your IDs. 
 save('305338691_308317361.mat','R011','R012','R021','R022');
 toc
+
+
+
+%% delete this
+
+figure(7)
+plot(t_01(12*fs:17*fs),filtered_signal_11(12*fs:17*fs))
+title('first ECG signal in seconds 12-17')
+xlabel('Time (sec)')
+ylabel('Voltage (micro-Volt)')
+axis tight
+
+hold on
+
+plot(t_01(12*fs:17*fs),ECG_305338691_01(12*fs:17*fs))
+
+
+
+
+
+figure(8)
+plot(t_01,filtered_signal_11)
+title('first ECG signal in seconds 20-25')
+xlabel('Time (sec)')
+ylabel('Voltage (micro-Volt)')
+hold on
+plot(T*R011,filtered_signal_11(R011),'o')
+hold off
 

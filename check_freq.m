@@ -45,5 +45,7 @@ plot(f_fft,Y_abs)
 
 figure(2)
 plot(filtered_signal)
+hold on 
+plot(signal)
 
 toc
