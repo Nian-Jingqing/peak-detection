@@ -17,10 +17,10 @@ clear sig1 sig2 sig3 sig4
 
 %% R-wave detection 
 %call function to detect R-waves 
-[R011,filtered_signal_11] = Rwave_detection(ECG_305338691_01,47); %R011 = index of R waves in signal
-[R012,filtered_signal_12] = Rwave_detection(ECG_308317361_01,59); %R012 = index of R waves in signal
-[R021,filtered_signal_21] = Rwave_detection(ECG_305338691_02,64); %R021 = index of R waves in signal
-[R022,filtered_signal_22] = Rwave_detection(ECG_308317361_02,50); %R022 = index of R waves in signal
+[R011,filtered_signal_11] = Rwave_detection(ECG_305338691_01,64); %R011 = index of R waves in signal
+[R012,filtered_signal_12] = Rwave_detection(ECG_308317361_01,47); %R012 = index of R waves in signal
+[R021,filtered_signal_21] = Rwave_detection(ECG_305338691_02,50); %R021 = index of R waves in signal
+[R022,filtered_signal_22] = Rwave_detection(ECG_308317361_02,59); %R022 = index of R waves in signal
 
 %% Plots
 % Add required plots
@@ -72,45 +72,42 @@ axis([20 25 min(filtered_signal_21) max(filtered_signal_21)])
 % Calculating the Heart rate in BPS, by counting the number of
 % beats in each minute and dividing by 60.
 
-HR1 = zeros(1,length(t_01));
+
+R011_times = R011./fs;
+
+HR1 = zeros(1,length(R011_times)-1);
+
 i = 1;
-time_window = 60;
 while i < length(HR1) 
-    if i<length(HR1)-time_window*fs
-        beats = sum((R011>(t_01(i)*fs))&(R011<(t_01(i+time_window*fs)*fs)));
-        HR1(i:i+fs*time_window) = beats/time_window;
-    else
-        beats = sum((R011>(t_01(i)*fs))&(R011<(t_01(end)*fs)));
-        HR1(i:end) = (beats*fs)/length(HR1(i:end));
-    end
-    i= i+fs*time_window;
+
+    HR1(i) = R011_times(i+1) - R011_times(i);
+    i = i + 1;
+    
 end
 
 
-HR2 = zeros(1,length(t_02));
+R021_times = R021./fs;
+
+HR2 = zeros(1,length(R021_times)-1);
+
 i = 1;
-time_window = 60;
 while i < length(HR2) 
-    if i<length(HR2)-time_window*fs
-        beats = sum((R021>(t_02(i)*fs))&(R021<(t_02(i+time_window*fs)*fs)));
-        HR2(i:i+fs*time_window) = beats/time_window;
-    else
-        beats = sum((R021>(t_02(i)*fs))&(R021<(t_02(end)*fs)));
-        HR2(i:end) = (beats*fs)/length(HR2(i:end));
-    end
-    i= i+fs*time_window;
+
+    HR2(i) = R021_times(i+1) - R021_times(i);
+    i = i + 1;
+    
 end
 
 % Third plot - The heart rate of each subject, at each minute recorded on the ECG signal
 
 figure(5)
-plot(t_01,HR1)
+plot(R011_times(2:end),HR1)
 title('The Heart rate as function of time - signal 1')
 xlabel('Time(sec)')
 ylabel('Heart Rate (beats per second)')
 
 figure(6)
-plot(t_02,HR2)
+plot(R021_times(2:end),HR2)
 title('The Heart rate as function of time - signal 2')
 xlabel('Time(sec)')
 ylabel('Heart Rate (beats per second)')

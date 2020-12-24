@@ -12,7 +12,7 @@ filtered_signal = filter(hd1,filtered_signal);
 
 
 fs = 1000;
-filterOrder = 5000;
+filterOrder = 2000;
 
 freqVec1 = [(PLFREQ-1)/(fs/2) , (PLFREQ+1)/(fs/2)] ;
 freqVec2 = [(PLFREQ*2-1)/(fs/2) , (PLFREQ*2+1)/(fs/2)] ;
