@@ -2,7 +2,9 @@ function [filtered_signal] = Filter_sig(signal,PLFREQ)
 % Filter_sig recieves a signal with breathing noise at 0.5 Hz frequencies,
 % and network noise at the given frequency - PLFREQ - and at 2*PLFREQ.
 % The function returns the filtered signal, without the noise frequencies.
-% Note that this function uses filtfilt() function, in order to overcome group delay.
+
+% Note that this function uses filtfilt() function, in order to overcome
+% group delay, by filtering the signal twice - forward and backwards.
 
 % Set sample frequency
 fs = 1000;
@@ -14,7 +16,7 @@ filtered_signal = filtfilt(hd.Numerator,1,signal);
 % Compensating for group delay - DELETE THIS
 %delay = mean(grpdelay(hd));
 %filtered_signal(1:delay) = [];
-
+%                                DELETE THIS
 
 % Filter with IIR butterworth band stop filter to eliminate breathing frequency (0.5 Hz)
 hd1 = breath_filter;
