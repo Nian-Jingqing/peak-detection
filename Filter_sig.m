@@ -23,8 +23,13 @@ hd1 = breath_filter;
 filtered_signal = filtfilt(hd1.sosMatrix,hd1.ScaleValues,filtered_signal);
 
 
+<<<<<<< Updated upstream
 % Using FIR notch filters to eliminate network noises
 filterOrder = 2000;
+=======
+fs = 1000;
+filterOrder = 1000;
+>>>>>>> Stashed changes
 
 freqVec1 = [(PLFREQ-1)/(fs/2) , (PLFREQ+1)/(fs/2)] ;
 freqVec2 = [(PLFREQ*2-1)/(fs/2) , (PLFREQ*2+1)/(fs/2)] ;
