@@ -114,7 +114,7 @@ ylabel('Heart Rate (beats per second)')
 
 %% Save R-wave detections for all signals
 %add your IDs. 
-save('305338691_308317361.mat','R011','R012','R021','R022');
+save('305338691_308317361.mat','RN011','RN012','RN021','RN022');
 toc
 
 
