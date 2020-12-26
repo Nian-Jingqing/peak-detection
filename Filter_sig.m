@@ -21,7 +21,7 @@ filtered_signal = filtfilt(hd1.sosMatrix,hd1.ScaleValues,filtered_signal);
 
 
 % Using FIR notch filters to eliminate network noises
-filterOrder = 2000;
+filterOrder = 1000;
 
 
 freqVec1 = [(PLFREQ-1)/(fs/2) , (PLFREQ+1)/(fs/2)] ;
