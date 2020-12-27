@@ -1,4 +1,4 @@
-function [R_peaks,filtered_signal] = Rwave_detection(ECG_signal,PLFREQ)
+function [R_peaks,filtered_signal,ratio_check] = Rwave_detection(ECG_signal,PLFREQ)
 % This function receives an ECG signal, and returns a vector that contains the indexes in which the R waves appear in the ECG signal.
 % in order to do so, the function computes the first derivative of the
 % signal, compares it to a preset threshold and compares the suspect
@@ -26,7 +26,7 @@ norm_first_deriv = (first_deriv-min_val)/(max_val-min_val);
 
 % Find mean slope to determine slope threshold
 mean_slope = mean(norm_first_deriv);
-slope_threshold = 1.1*mean_slope;
+slope_threshold = 1.13*mean_slope;
 
 % Comparing the derivative to the threshold in order to find QRS complexes
 i=1;
@@ -50,7 +50,7 @@ QRS_comp = QRS_comp(1:k);
 
 % In order to adjust the indexes to the peak exactly, we change it to the index
 % of the maximum point in a window of 0.25 seconds to each direction
-window = 0.25*fs;
+window = 0.15*fs;
 
 for i = 1:length(QRS_comp)
     
@@ -66,8 +66,42 @@ for i = 1:length(QRS_comp)
     end
 end
 
+
+window = 0.32*fs;
+
+for i = 1:length(QRS_comp)
+    
+    index = QRS_comp(i);
+    
+    if (index>window) && (index<(length(filtered_signal)-window))
+        
+        check_vec = filtered_signal(index-window:index+window);
+        [~,max_ind] = max(check_vec);
+        ind_change = max_ind-(window+1);
+        QRS_comp(i)= index+ind_change;
+        
+    end
+end
+
+window = 0.2*fs;
+
+for i = 1:length(QRS_comp)
+    
+    index = QRS_comp(i);
+    
+    if (index>window) && (index<(length(filtered_signal)-window))
+        
+        check_vec = filtered_signal(index-window:index+window);
+        [~,max_ind] = max(check_vec);
+        ind_change = max_ind-(window+1);
+        QRS_comp(i)= index+ind_change;
+        
+    end
+end
+
+
 % Delete replicated peaks if exsists
-QRS_comp = unique(QRS_comp);
+R_peaks = unique(QRS_comp);
 
 % Finding the original signal's peak indexes, and comparing it to the indexes we found
 % Normalize the original signal to a scale of 0-1
@@ -75,10 +109,6 @@ min_val = min(filtered_signal);
 max_val = max(filtered_signal);
 ECG_signal_norm = (filtered_signal-min_val)/(max_val-min_val);
 
-% Finding the peaks of the original signal
- [~,ECG_peaks] = findpeaks(ECG_signal_norm,'MinPeakProminence',0.3,'MinPeakDistance',fs*0.3);
 
-% Deleting the indexes that do not appear in both vectors
- R_peaks = intersect(QRS_comp,ECG_peaks);
 
 end
