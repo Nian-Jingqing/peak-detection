@@ -137,29 +137,3 @@ ylabel('Voltage (micro-Volt)')
 axis tight
 
 toc
-
-
-
-%% delete this
-
-
-figure(8)
-plot(t_01,filtered_signal_11)
-title('first ECG signal in seconds 20-25')
-xlabel('Time (sec)')
-ylabel('Voltage (micro-Volt)')
-hold on
-plot(T*RN011,filtered_signal_11(RN011),'o')
-hold off
-
-
-
-
-figure(9)
-plot(t_02,filtered_signal_21)
-title('first ECG signal in seconds 20-25')
-xlabel('Time (sec)')
-ylabel('Voltage (micro-Volt)')
-hold on
-plot(T*RN021,filtered_signal_21(RN021),'o')
-hold off
